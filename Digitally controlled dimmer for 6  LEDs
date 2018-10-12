@@ -1,0 +1,133 @@
+/*
+  Istanbul Kültür University
+  Electronic Engineering
+  Embedded System Applications
+
+  Objective 2: Digitally controlled dimmer for 6  LEDs
+
+  Using 3 buttons, user should be able control the brightness of 6 LEDs digitally.
+  Two of the buttons should be used for increasing/decresing the brightness level and the other button should be used as LED SELECT button
+
+  Author: Emre IMREN
+  12 Oct 2018
+*/
+
+#define Button_Inc 2 //Brightness Increasing Button / Button1
+#define Button_Dec 4 //Brightness Decreasing Button /  Button2
+#define Button_Select 7 //Led Selection Button /  Button3
+
+#define Led_1 3       //Led1 connected to pin 3 for PWM
+#define Led_2 5       //Led2 connected to pin 5 for PWM
+#define Led_3 6       //Led3 connected to pin 6 for PWM
+#define Led_4 9       //Led4 connected to pin 9 for PWM
+#define Led_5 10      //Led5 connected to pin 10 for PWM
+#define Led_6 11      //Led6 connected to pin 11 for PWM
+
+int brightness = 127;    //Inital of brightness
+int count = 0;           //Button push counts
+int lastbuttonstate = 0; //Select button last state
+char led;                //Selected led
+
+
+void setup() {
+
+//Buttons adjusted as Pullup Input
+  pinMode(Button_Inc, INPUT_PULLUP);
+  pinMode(Button_Dec, INPUT_PULLUP);
+  pinMode(Button_Select, INPUT_PULLUP);
+
+//Leds adjusted as Output
+  pinMode(Led_1, OUTPUT);
+  pinMode(Led_2, OUTPUT); 
+  pinMode(Led_3, OUTPUT); 
+  pinMode(Led_4, OUTPUT); 
+  pinMode(Led_5, OUTPUT); 
+  pinMode(Led_6, OUTPUT); 
+
+}
+
+void loop() {
+
+
+  if (!digitalRead(Button_Select)) { //Buton3 status checked.
+    count ++;                        //Count increased.
+    delay(100);                      // waiting for process.
+  }
+
+
+  if (digitalRead(Button_Inc)) //Buton1 status checked.
+  {
+    if (brightness < 255) { //The brightness was checked for the highest value.
+      brightness++;         //brightness increased.
+      delay(30);            //30ms waiting for process.
+    }
+  }
+
+  if (digitalRead(Button_Dec))//Buton2 status checked.
+  {
+    if (brightness > 0) { //The brightness was checked for the lowest value.
+      brightness--;       //brightness decreased.
+      delay(30);          //30ms waiting for process.
+    }
+  }
+
+  if (count <= 6) {       //We have six led, so count must be equal or smaller than 6.
+    switch (count) {      //Switch statement
+      case 1:             //Selected one from Button 3
+      led = Led_1;        //Adjusted led to Led_1
+      //Other leds must be low.
+      digitalWrite(Led_2, LOW);
+      digitalWrite(Led_3, LOW);
+      digitalWrite(Led_4, LOW);
+      digitalWrite(Led_5, LOW);
+      digitalWrite(Led_6, LOW);
+      break;
+      case 2:
+      led = Led_2;
+      digitalWrite(Led_1, LOW);
+      digitalWrite(Led_3, LOW);
+      digitalWrite(Led_4, LOW);
+      digitalWrite(Led_5, LOW);
+      digitalWrite(Led_6, LOW);
+      break;
+      case 3:
+      digitalWrite(Led_1, LOW);
+      digitalWrite(Led_2, LOW);
+      led = Led_3;
+      digitalWrite(Led_4, LOW);
+      digitalWrite(Led_5, LOW);
+      digitalWrite(Led_6, LOW);
+      break;
+      case 4:
+      digitalWrite(Led_1, LOW);
+      digitalWrite(Led_2, LOW);
+      digitalWrite(Led_3, LOW);
+      led = Led_4;
+      digitalWrite(Led_5, LOW);
+      digitalWrite(Led_6, LOW);
+      break;
+      case 5:
+      digitalWrite(Led_1, LOW);
+      digitalWrite(Led_2, LOW);
+      digitalWrite(Led_3, LOW);
+      digitalWrite(Led_4, LOW);
+      led = Led_5;
+      digitalWrite(Led_6, LOW);
+      break;
+      case 6:
+      digitalWrite(Led_1, LOW);
+      digitalWrite(Led_2, LOW);
+      digitalWrite(Led_3, LOW);
+      digitalWrite(Led_4, LOW);
+      digitalWrite(Led_5, LOW);
+      led = Led_6;
+      break;
+    }
+  }
+  else {                            
+    count = 0;                      //If count highest then 6, count must be equal to zero for start again.
+  }
+
+  analogWrite(led, brightness);    //Led burned with adjustable brightness.
+
+}
